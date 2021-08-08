@@ -1,23 +1,35 @@
-import logo from './logo.svg';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import './App.css';
-
+import { DataTable } from './DataTable';
+// 3,4,5,8
 function App() {
+  const [data, setData] = useState([])
+  const [dataTable, setDataTable] = useState([])
+  const [query, setQuery] = useState('')
+  const field = ['name','phone_number', 'email', 'address']
+  useEffect(() => {
+    axios.get('http://employees.asika.id/api/employees/1')
+      .then(res => setData(res.data.data))
+    }, [])
+    
+  useEffect(()=>{
+    setDataTable(data.map(dt =>
+      Object.keys(dt)
+        .filter(key => field.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = dt[key]
+          return obj
+        },{})
+      ))
+        // console.log(data)
+      },[data])
+      console.log(dataTable)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     <div>Filter Disini</div>
+     {/* <div>{JSON.stringify(data)}</div> */}
+     <DataTable data= { data }/>
     </div>
   );
 }
